@@ -6,6 +6,7 @@
 - **Peer-to-Peer (P2P) Architecture**: In a P2P architecture, there is minimal reliance on dedicated servers in data centers. Peers, which are intermittently connected hosts, communicate directly with each other without a dedicated server intermediary.
 - **P2P Scalability**: P2P architectures offer self scalability, with peers contributing service capacity by distributing files to other peers. They are cost effective and do not require significant server infrastructure.
 - **Challenges of P2P Architectures**: P2P applications face challenges related to security, performance, and reliability due to their highly decentralized structure.
+  
 - **Communication Between Processes**: Processes running on different end systems communicate with each other by exchanging messages across the computer network.
 - **Socket**: Messages sent between processes must pass through the network using a software interface called a `socket`. A socket is analogous to a door through which a process sends and receives messages.
 - **Socket Communication**: Sockets serve as the interface between the application layer and the transport layer within a host. They are the `Application Programming Interface (API)` for building network applications.
@@ -24,10 +25,6 @@
 - **Security**: Transport protocols can provide security services like encryption for confidentiality, data integrity, and end-point authentication.
 - **UDP and TCP**: The Internet offers two transport layer protocols: UDP and TCP. UDP is lightweight and provides unreliable data transfer, while TCP offers reliable data transfer and connection oriented services.
 - **Services Not Provided**: Neither UDP nor TCP provide throughput or timing guarantees, which means the Internet cannot guarantee specific timing or throughput for time sensitive applications.
-
-> the Internet community has developed an enhancement for TCP, called Transport Layer Security (TLS) [RFC 5246]. TCP enhanced with TLS not only does everything that traditional TCP does but also provides critical process to process security services, including encryption, data integrity, and end point authentication.
-
-> In particular, if an application wants to use the services of TLS, it needs to include TLS code (existing, highly optimized libraries and classes) in both the client and server sides of the application. TLS has its own socket API that is similar to the traditional TCP socket API. 
 
 ## 2.2 Application Layer Protocol: Web and HTTP
 
@@ -84,7 +81,11 @@ Content-Type: text/html \r\n
 - **HTTP Methods**: HTTP includes methods like GET, POST, PUT, and DELETE for different types of requests and actions.
 - **Entity Body**: The entity body in HTTP messages contains data related to the request method.
 
-### 2.2.3 Cookies
+### 2.2.3 Maintaining User/Server State: Cookies
+
+- HTTP GET/response interaction is *stateless*
+    - No need for client/server to track state of multi-step exchange
+    - All HTTP requests are independant of each other
 
 - There are situations where web sites need to identify users, for security or personalization purposes. HTTP uses cookies to achieve user identification and tracking.
 - Cookies have four components: a `cookie header` in HTTP `response` and `request` messages, a `cookie file` on the user's end system, and a `back end database` on the web site.
@@ -130,64 +131,7 @@ Content-Type: text/html \r\n
 - **Server Push:** Enables sending additional objects to the client without explicit requests, reducing latency.
 - **HTTP/3 and QUIC:** QUIC, a new transport protocol over UDP and supports features like message multiplexing, is used for HTTP/3. This streamlined design incorporates HTTP/2 features and leverages QUIC's advantages.
 
-## 2.3 Application Layer Protocol: SMTP
-
-> A typical message starts its journey in the sender’s user agent, then travels to the sender’s mail server, and then travels to the recipient’s mail server, where it is deposited in the recipient’s mailbox. Reattempts are often done every 30 minutes
-
-### 2.3.1 Email Components
-
-- **User Agents:** Tools like Microsoft Outlook, Apple Mail, and Gmail, allowing users to manage emails.
-- **Mail Servers:** The central infrastructure, hosting mailboxes for recipients like Bob.
-- **SMTP (Simple Mail Transfer Protocol):** The principal protocol to send emails between servers.
-
-### 2.3.2 SMTP Basics
-
-- SMTP transfers messages between sender and recipient mail servers at `Port 25`.
-- The client (sender's server) initiates a connection to the recipient's server via TCP.
-
-```http
-S: 220 hamburger.edu 
-C: HELO crepes.fr
-S: 250 Hello crepes.fr, pleased to meet you 
-C: MAIL FROM: <alice@crepes.fr>
-S: 250 alice@crepes.fr ... Sender ok
-C: RCPT TO: <bob@hamburger.edu>
-S: 250 bob@hamburger.edu ... Recipient ok
-C: DATA
-S: 354 Enter mail, end with ”.” on a line by itself 
-C: Do you like ketchup?
-C: How about pickles?
-C: .
-S: 250 Message accepted for delivery
-C: QUIT
-S: 221 hamburger.edu closing connection
-```
-
-- It introduces the sender and recipient, transmits the message, and uses a persistent connection for multiple messages.
-
-### 2.3.3 Mail Message Structure
-
-- Email messages consist of a `header` and a `body`.
-- The header includes sender and recipient information, such as `"From," "To," and "Subject."`. The header lines and the body of the message are separated by a blank line (that is, by CRLF).
-- These headers are distinct from SMTP commands used for server handshake communication.
-
-```http
-From: alice@crepes.fr
-To: bob@hamburger.edu
-Subject: Searching for the meaning of life.
-```
-
-### 2.3.4 Mail Access Protocols
-
-<img src="https://lh3.googleusercontent.com/pw/ADCreHe0fyv4ULp_uamEsceCVVhVIa89gH-EYeg8F5QQ9MJOB6_HPfvS8QpwFXnBbpd_o5WBJf3SYSGt_KwkgMRBQ0BUtFHZP6lTTLAvPlWIfoypiutfj2fm5ZktaSNOuMKNcfdEXXH7OafVuFbqC-vIcfa4=w1876-h442-s-no" width="680" height="220">
-
-> Bob’s user agent can’t use SMTP to obtain the messages because obtaining the messages is a pull operation, whereas SMTP is a push protocol.
-
-- Users retrieve their email messages from a shared mail server using either HTTP or IMAP.
-- HTTP is often used for web based email clients like Gmail, while IMAP is common with clients like Microsoft Outlook.
-- Both the HTTP & IMAP approaches allow to manage folders, move messages to folders, delete messages, mark messages as important, and so on.
-
-## 2.4 Application Layer Protocol: DNS
+## 2.3 Application Layer Protocol: DNS
 
 - DNS is an essential service that translates human friendly hostnames into IP addresses.
 - It's a distributed database and an application layer protocol, implemented with `DNS servers`, often running `BIND` software and runs over UDP and uses port 53.
@@ -206,7 +150,7 @@ Subject: Searching for the meaning of life.
         ```
     - **Load Distribution**: DNS balances traffic among replicated servers by rotating IP addresses within replies, ensuring even distribution. This technique is also applied to email servers with shared alias names.
 
-### 2.4.1 How DNS Works: High Level Overview
+### 2.3.1 How DNS Works: High Level Overview
 
 > gethostbyname() is the function call that an application calls in order to perform the translation.
 
@@ -216,7 +160,7 @@ Subject: Searching for the meaning of life.
 - Issues with centralized design: `single point of failure,` `high traffic volume`, `distant database`, and `maintenance`.
 - DNS uses a hierarchical structure and a distributed database., to handle the vast number of hosts on the Internet.
 
-### 2.4.2 Distributed, Hierarchical Database
+### 2.3.2 Distributed, Hierarchical Database
 
 
 <img src="https://lh3.googleusercontent.com/pw/ADCreHfjtoFE2ozufMyfFi_xvvvjhwhvWHxaFcgn2jVCEG50nQsaQlTqhQQovC1HaJrlB0h8La--jGtCdoz8c6RxZVLsou9ISfsTEy7uaS-fjCMZNBiZtfTPnFpbVbYUDbQ49wyFPKQJJNUc-_7h4wmYm2IX=w1920-h710-s-no" width="580" height="220">
@@ -229,11 +173,11 @@ Subject: Searching for the meaning of life.
 
 - DNS extensively utilizes caching to enhance performance. These are stored temporarily and it allows DNS servers to quickly respond to subsequent queries for the same hostname.
 
-### 2.4.3 Recursive vs Iterative DNS Queries
+### 2.3.3 Recursive vs Iterative DNS Queries
 
 <img src="https://lh3.googleusercontent.com/pw/ADCreHcDzbK4FY8RExEyQO82XsXu_OFQXOqMXfJx6q8TO_Tx4wYRJt9WaiktQr-4bF482giEXJmGfkLMszdS7Ufn_sjYphuuVOdpKVn7RI6laoHLFKiPUtFpU_kOUnZ_UJN7NjeJdt5Bp65KPlNKkiEpFrIF=w1708-h1044-s-no" width="780" height="520">
 
-### 2.4.4 DNS Records & Messages
+### 2.3.4 DNS Records & Messages
 
 - DNS servers store resource records (RRs) in the distributed database.
 - A resource record (RR) is a four tuple: `(Name, Value, Type, TTL)`.
@@ -255,10 +199,39 @@ Subject: Searching for the meaning of life.
 
 > A 1 bit recursion available field is set in a reply if the DNS server supports recursion. 
 
-### 2.4.5 Inserting Records to DNS Database
+### 2.3.5 Inserting Records to DNS Database
 
 > A registrar is a commercial entity that verifies the uniqueness of the domain name, enters the domain name into the DNS database (as discussed below), and collects a small fee from you for its services.
 
 - To register a domain name, you need to provide registrar with DNS server names and IP addresses. Registrar enters `Type NS` and `Type A` resource records for `authoritative` DNS servers into `TLD` servers.
 - Additional resource records, like Type A and Type MX, must be added for Web and mail servers.
 
+## 2.4 Socket programming with UDP and TCP
+
+### Socket programming with UDP
+
+- No handshaking before sending data
+- Both client and server processes use same DatagramSocket
+- Destination IP address and port # are *explicitly attached* to datagram by client and server processes when sent through socket
+- Source IP address and port # discovered by client and server processes when they receive a datagram
+
+-> Transmitted datagram may be lost or receiverd out of order
+-> UDP provides *unreliable* transfer of datagrams between client and server
+
+### Socket programming with TCP
+
+- **Server socket must first be running**
+    - Server must have created a socket (door) that welcomes client's contact (welcoming socket)
+- **Client must contact server**
+    - Client creates TCP socket specifying IP address and port # of *server* process
+    - When client creates socket: client TCP establishes connection to server TCP
+- When contacted by client, **server TCP creates a new socket** for server process to communicate with that particular client
+    - Allows server to talk with multiple clients
+    - Source IP address and port numbers used to distinguish clients
+
+- Destination IP address and port # are **not** explicitly attached to application data unit sent and received by client and server processes
+    - The application data unit is just a block of application data bytes
+ 
+Note: *connectionSocket* (dedicated to a specific client) is different than *welcomeSocket* (server socket that listens for new clients)
+
+-> Application viewpoint: TCP provides reliable, in-order byte-stream transfer ("pipe") between client and server
