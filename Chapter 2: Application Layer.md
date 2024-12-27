@@ -216,6 +216,7 @@ Content-Type: text/html \r\n
 - Source IP address and port # discovered by client and server processes when they receive a datagram
 
 -> Transmitted datagram may be lost or receiverd out of order
+
 -> UDP provides *unreliable* transfer of datagrams between client and server
 
 ### Socket programming with TCP
@@ -232,6 +233,6 @@ Content-Type: text/html \r\n
 - Destination IP address and port # are **not** explicitly attached to application data unit sent and received by client and server processes
     - The application data unit is just a block of application data bytes
  
-Note: *connectionSocket* (dedicated to a specific client) is different than *welcomeSocket* (server socket that listens for new clients)
+- Note: *connectionSocket* (dedicated to a specific client) is different than *welcomeSocket* (server socket that listens for new clients)
 
 -> Application viewpoint: TCP provides reliable, in-order byte-stream transfer ("pipe") between client and server
