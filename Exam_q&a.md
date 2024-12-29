@@ -9,9 +9,9 @@
 ### What are ACKs and NAKs ?
 
 In networking, ACKs (Acknowledgements) and NAKs (Negative Acknowledgements) are control messages used in communication protocols to manage the reliability of data transmission between devices. These messages help ensure data is transmitted correctly and reliably, allowing the sender and receiver to confirm the successful receipt (ACK) or detect errors (NAK). 
-An ACK is a signal sent by the receiver to the sender to indicate that a packet of data has been successfully received without errors.
+An ACK is a signal sent by the receiver to the sender to indicate that a packet of data has been successfully received without errors. A NAK is a signal sent by the receiver to the sender indicating that a packet was not successfully received, either due to errors or loss, and needs to be resent.
+
   - When a receiver successfully receives a data packet, it sends an ACK message back to the sender. The ACK typically contains the sequence number of the last successfully received packet, so the sender knows which data has been correctly received.
-A NAK is a signal sent by the receiver to the sender indicating that a packet was not successfully received, either due to errors or loss, and needs to be resent.
   - When a receiver detects an error (e.g., checksum failure, missing packet, etc.) or a lost packet, it sends a NAK message back to the sender. The sender then retransmits the specific data that was not received correctly.
 
 ### What's the difference between flow control and congestion control ?
