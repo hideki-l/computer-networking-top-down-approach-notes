@@ -7,6 +7,9 @@
 
 ## 5.1 Routing Algorithms
 
+- Path: sequence of routers packets travers from initial source host to final destination host
+- Higher the congestion level, the higher the cost
+    
 **Distance Vector Algorithm:** Each router maintains a table with distances to destinations, updating based on information exchanged with neighbors (e.g., RIP protocol).
 
 **Link State Algorithm:** Routers share comprehensive information about network link states to build a shortest path based on the complete network topology for efficient path calculations (e.g., OSPF protocol).
